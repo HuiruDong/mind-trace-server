@@ -93,3 +93,7 @@ nest g filter common/filters/http-exception
 # 生成拦截器
 nest g interceptor common/interceptors/logging
 ```
+
+## TODO
+
+- [ ] **Content 富文本迁移**：当前 `Diary.content` 使用纯文本格式，后期切换为富文本后，需要对存量数据做一次迁移，将纯文本包裹为 `<p>content</p>` 格式。

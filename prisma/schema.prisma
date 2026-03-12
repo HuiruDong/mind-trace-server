@@ -1,38 +1,45 @@
+// 生成器配置：告诉 Prisma 用什么方式生成客户端代码
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js" // 使用 JS/TS 客户端
+  output   = "../generated/prisma" // 生成的代码输出到这个目录
 }
 
+// 数据源配置：告诉 Prisma 连接什么数据库
 datasource db {
-  provider = "mysql"
+  provider = "mysql" // 使用 MySQL 数据库
 }
 
+/// 心情分组（如：开心类、难过类）
 model MoodGroup {
-  id    Int    @id @default(autoincrement())
-  name  String @unique @db.VarChar(50)
-  sort  Int    @default(0)
+  id    Int    @id @default(autoincrement()) // 主键，自增
+  name  String @unique @db.VarChar(50) // 分组名称，唯一，最长50字符
 
-  moods Mood[]
+  // 关系字段（虚拟字段，不会在数据库中创建列）
+  moods Mood[] // 一个分组下有多个心情（一对多）
 }
 
+/// 心情（如：快乐、悲伤、焦虑）
 model Mood {
-  id    Int    @id @default(autoincrement())
-  title String @db.VarChar(50)
-  sort  Int    @default(0)
+  id    Int    @id @default(autoincrement()) // 主键，自增
+  title String @db.VarChar(50) // 心情名称，最长50字符
 
-  group   MoodGroup @relation(fields: [groupId], references: [id])
-  groupId Int
+  // 外键关系：每个心情属于一个分组
+  group   MoodGroup @relation(fields: [groupId], references: [id]) // 关联到 MoodGroup
+  groupId Int // 外键，对应 MoodGroup 的 id
 
-  diaries Diary[]
+  // 关系字段（虚拟字段）
+  diaries Diary[] // 一个心情可以关联多条日记（一对多）
 }
 
+/// 日记
 model Diary {
-  id        Int      @id @default(autoincrement())
-  title     String?  @db.VarChar(200)
-  content   String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement()) // 主键，自增
+  title     String?  @db.VarChar(200) // 标题，可选（? 表示可以为空）
+  content   String   @db.Text // 正文内容，长文本类型
+  createdAt DateTime @default(now()) // 创建时间，默认为当前时间
+  updatedAt DateTime @updatedAt // 更新时间，每次修改自动更新
 
-  mood   Mood? @relation(fields: [moodId], references: [id])
-  moodId Int?
+  // 外键关系：每条日记可以关联一个心情（可选）
+  mood   Mood? @relation(fields: [moodId], references: [id]) // 关联到 Mood，? 表示可以没有
+  moodId Int? // 外键，对应 Mood 的 id，可以为空
 }
