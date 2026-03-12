@@ -1,98 +1,95 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Mind Trace Server
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+基于 NestJS + Prisma 的后端服务。
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 目录结构
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ yarn install
+```
+src/
+├── main.ts                       # 入口文件
+├── app.module.ts                 # 根模块
+├── app.controller.ts             # 根控制器（可选）
+├── app.service.ts                # 根服务（可选）
+│
+├── common/                       # 公共/共享代码
+│   ├── decorators/               # 自定义装饰器
+│   ├── filters/                  # 异常过滤器
+│   ├── guards/                   # 守卫
+│   ├── interceptors/             # 拦截器
+│   ├── pipes/                    # 管道
+│   ├── middleware/               # 中间件
+│   ├── dto/                      # 公共 DTO
+│   ├── interfaces/               # 公共接口
+│   └── constants/                # 常量
+│
+├── config/                       # 配置模块
+│   ├── config.module.ts
+│   └── configuration.ts
+│
+├── prisma/                       # Prisma 模块（数据库）
+│   ├── prisma.module.ts
+│   └── prisma.service.ts
+│
+└── modules/                      # 业务模块
+    ├── user/
+    │   ├── user.module.ts
+    │   ├── user.controller.ts
+    │   ├── user.service.ts
+    │   ├── dto/
+    │   │   ├── create-user.dto.ts
+    │   │   └── update-user.dto.ts
+    │   └── entities/
+    │       └── user.entity.ts
+    │
+    └── mood/
+        ├── mood.module.ts
+        ├── mood.controller.ts
+        ├── mood.service.ts
+        ├── dto/
+        │   ├── create-mood.dto.ts
+        │   └── update-mood.dto.ts
+        └── entities/
+            └── mood.entity.ts
 ```
 
-## Compile and run the project
+## 命名规范
+
+| 类型 | 文件名 | 类名 | 示例 |
+|------|--------|------|------|
+| Module | `*.module.ts` | `*Module` | `user.module.ts` → `UserModule` |
+| Controller | `*.controller.ts` | `*Controller` | `user.controller.ts` → `UserController` |
+| Service | `*.service.ts` | `*Service` | `user.service.ts` → `UserService` |
+| Guard | `*.guard.ts` | `*Guard` | `auth.guard.ts` → `AuthGuard` |
+| Pipe | `*.pipe.ts` | `*Pipe` | `validation.pipe.ts` → `ValidationPipe` |
+| Filter | `*.filter.ts` | `*Filter` | `http-exception.filter.ts` → `HttpExceptionFilter` |
+| Interceptor | `*.interceptor.ts` | `*Interceptor` | `logging.interceptor.ts` → `LoggingInterceptor` |
+| Middleware | `*.middleware.ts` | `*Middleware` | `logger.middleware.ts` → `LoggerMiddleware` |
+| Decorator | `*.decorator.ts` | — | `roles.decorator.ts` → `@Roles()` |
+| DTO | `*.dto.ts` | `*Dto` | `create-user.dto.ts` → `CreateUserDto` |
+| Entity | `*.entity.ts` | `*Entity` | `user.entity.ts` → `UserEntity` |
+| Interface | `*.interface.ts` | — | `user.interface.ts` |
+| Spec | `*.spec.ts` | — | `user.service.spec.ts` |
+
+## 命名原则
+
+1. **文件名用 kebab-case**（短横线分隔），如 `create-user.dto.ts`
+2. **类名用 PascalCase**，如 `CreateUserDto`
+3. **一个模块一个目录**，模块内高内聚，包含自己的 controller、service、dto、entity
+4. **公共代码放 `common/`**，跨模块共享的守卫、管道、装饰器等
+5. **业务模块放 `modules/`**，用 `nest g res modules/<name>` 生成
+
+## 常用 CLI 命令
 
 ```bash
-# development
-$ yarn run start
+# 生成完整 CRUD 资源模块
+nest g res modules/user
 
-# watch mode
-$ yarn run start:dev
+# 生成守卫
+nest g guard common/guards/auth
 
-# production mode
-$ yarn run start:prod
+# 生成过滤器
+nest g filter common/filters/http-exception
+
+# 生成拦截器
+nest g interceptor common/interceptors/logging
 ```
-
-## Run tests
-
-```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
